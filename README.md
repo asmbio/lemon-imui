@@ -1,7 +1,4 @@
 # Lemon IMUI
-##### Lemon IMUI
-## asd
-# Lemon IMUI
 
 基于 VUE 2.0 的 IM 聊天组件
 
