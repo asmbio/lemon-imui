@@ -82,6 +82,7 @@ export default {
      */
     hideMessageTime: Boolean,
     sendKey: Function,
+    wrapKey: Function,
     sendText: String,
     contextmenu: Array,
     contactContextmenu: Array,
@@ -515,6 +516,7 @@ export default {
                 tools={this.editorTools}
                 sendText={this.sendText}
                 sendKey={this.sendKey}
+                wrapKey={this.wrapKey}
                 onSend={this._handleSend}
                 onUpload={this._handleUpload}
               />
