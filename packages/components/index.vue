@@ -176,14 +176,27 @@ export default {
      * 新增一条消息
      */
     appendMessage(message, scrollToBottom = false) {
-      if (allMessages[message.toContactId] === undefined) {
+      let unread = "+1";
+      let messageList = allMessages[message.toContactId];
+      let hasMsg = false;
+      // 如果是自己的消息需要push，发送的消息不再增加未读条数
+      if (this.user.id == message.fromUser.id) unread = "+0";
+      if (messageList === undefined) {
         this.updateContact({
           id: message.toContactId,
-          unread: "+1",
+          unread: unread,
           lastSendTime: message.sendTime,
           lastContent: this.lastContentRender(message),
         });
       } else {
+        // 如果消息存在则不再添加
+        messageList.forEach(item => {
+          if (item.id == message.id) {
+            hasMsg = true;
+            throw new Error("EndIterative");
+          }
+        });
+        if (hasMsg) return;
         this._addMessage(message, message.toContactId, 1);
         const updateContact = {
           id: message.toContactId,
@@ -196,7 +209,7 @@ export default {
           }
           this.CacheDraft.remove(message.toContactId);
         } else {
-          updateContact.unread = "+1";
+          updateContact.unread = unread;
         }
         this.updateContact(updateContact);
       }
