@@ -155,7 +155,6 @@ export default {
   },
   computed: {
     proxyTools() {
-      console.log("this.tools", this.tools);
       if (!this.tools) return [];
       const defaultTools = [
         {
@@ -317,27 +316,6 @@ export default {
       this._checkSubmitDisabled();
     },
     _handleKeydown(e) {
-      const ATing = false;
-      if (ATing) {
-        if (e.keyCode == 38 || e.keyCode == 40) {
-          e.preventDefault();
-          if (e.keyCode == 38) {
-            ATSelectedPrev();
-          }
-          if (e.keyCode == 40) {
-            ATSelectedNext();
-          }
-          return;
-        }
-        if (e.keyCode == 13) {
-          e.preventDefault();
-          ATSelected();
-          return;
-        }
-        if (e.keyCode == 37 || e.keyCode == 39) {
-          ATPopupClose();
-        }
-      }
       if (e.keyCode == 13 || (e.keyCode == 13 && e.shiftKey)) {
         e.preventDefault();
       }
@@ -345,10 +323,6 @@ export default {
         e.preventDefault();
         command("insertLineBreak");
       }
-      if (this.at && (e.key == "@" || (e.shiftKey && e.keyCode == 229))) {
-        setTimeout(() => (ATing = true), 300);
-      }
-
       if (this.submitDisabled == false && this.sendKey(e)) {
         this._handleSend();
       }

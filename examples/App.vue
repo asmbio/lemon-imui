@@ -397,13 +397,6 @@
         <td></td>
       </tr>
       <tr>
-        <td width="150">theme</td>
-        <td width="350">主题</td>
-        <td width="150">default | blue</td>
-        <td width="100">default</td>
-        <td></td>
-      </tr>
-      <tr>
         <td width="150">loadingText</td>
         <td width="350">消息加载文字</td>
         <td width="150">String | Function</td>
@@ -430,6 +423,15 @@
         <td width="150">String</td>
         <td width="100">发送消息</td>
         <td></td>
+      </tr>
+      <tr>
+        <td width="150">wrapKey</td>
+        <td width="350">输入框换行检查函数</td>
+        <td width="150">Function(event)=>Boolean</td>
+        <td width="100"></td>
+        <td>
+          (e)=>e.keyCode == 13 && e.ctrlKey == false && e.shiftKey == false;
+        </td>
       </tr>
       <tr>
         <td width="150">sendKey</td>
