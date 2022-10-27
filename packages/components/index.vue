@@ -189,9 +189,7 @@ export default {
         });
       } else {
         // 如果消息存在则不再添加
-        let hasMsg = messageList.some(item => {
-          return item.id == message.id;
-        });
+        let hasMsg = messageList.some(({id})=>id == message.id);
         if (hasMsg) return;
         this._addMessage(message, message.toContactId, 1);
         const updateContact = {
