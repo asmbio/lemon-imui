@@ -73,7 +73,7 @@
         <lemon-button @click="appendEventMessage">发送 event 消息</lemon-button>
         <lemon-button @click="removeMessage">删除最近一条消息</lemon-button>
         <lemon-button @click="updateMessage">修改消息</lemon-button>
-        <lemon-button @click="appendCustomMessage">发送消息</lemon-button>
+        <lemon-button @click="appendCustomMessage">自定义消息</lemon-button>
         <br />
         <lemon-button @click="updateContact">修改联系人信息</lemon-button>
         <lemon-button @click="changeMenuVisible">切换导航显示</lemon-button>
@@ -199,7 +199,7 @@
         <td width="350">唯一ID</td>
         <td width="150">String/Number</td>
         <td width="100">-</td>
-        <td></td>
+        <td>如果消息的ID发生相同的情况下appendMessage()方法无效</td>
       </tr>
       <tr>
         <td>status</td>
@@ -249,7 +249,7 @@
         <td>接收消息的联系人ID</td>
         <td>String | Number</td>
         <td>-</td>
-        <td></td>
+        <td>作为发送者时为接收消息的联系人ID；作为接收者时为发送消息的联系人ID。</td>
       </tr>
       <tr>
         <td>fromUser</td>
@@ -976,6 +976,7 @@ Vue.component(LemonMessageVoice.name,LemonMessageVoice);
       "
     ></pre>
     <p>5.接收消息</p>
+    <p>接收消息需要将toContactId设置为发送人，这时系统才能识别到对应的联系人。如果appendMessage()是自己的消息，unread不会自增。</p>
     <pre
       v-text="
         `mounted(){
@@ -1505,6 +1506,7 @@ export default {
         ...this.user,
       };
       IMUI.appendMessage(message, true);
+      console.log("🚀 ~ file: App.vue ~ line 1508 ~ appendMessage ~ message", message)
     },
     appendEventMessage() {
       const { IMUI } = this.$refs;

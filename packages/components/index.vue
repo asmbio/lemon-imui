@@ -178,9 +178,8 @@ export default {
     appendMessage(message, scrollToBottom = false) {
       let unread = "+1";
       let messageList = allMessages[message.toContactId];
-      let hasMsg = false;
       // 如果是自己的消息需要push，发送的消息不再增加未读条数
-      if (this.user.id == message.fromUser.id) unread = "+0";
+      if (message.type == 'event' || this.user.id == message.fromUser.id) unread = "+0";
       if (messageList === undefined) {
         this.updateContact({
           id: message.toContactId,
@@ -190,11 +189,8 @@ export default {
         });
       } else {
         // 如果消息存在则不再添加
-        messageList.forEach(item => {
-          if (item.id == message.id) {
-            hasMsg = true;
-            throw new Error("EndIterative");
-          }
+        let hasMsg = messageList.some(item => {
+          return item.id == message.id;
         });
         if (hasMsg) return;
         this._addMessage(message, message.toContactId, 1);
