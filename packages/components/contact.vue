@@ -66,7 +66,7 @@ export default {
           {!this.simple && (
             <p class="lemon-contact__content">
               {isString(contact.lastContent) ? (
-                <span domProps={{ innerHTML: this.IMUI.emojiNameToImage(contact.lastContent) }} />
+                <span domProps={{ innerHTML: contact.lastContent }} />
               ) : (
                 contact.lastContent
               )}

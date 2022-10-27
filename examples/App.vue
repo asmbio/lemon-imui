@@ -1253,7 +1253,7 @@ export default {
       index: "T",
       unread: 32,
       lastSendTime: 3,
-      lastContent: "你好123[!1f923]",
+      lastContent: "你好123",
     };
     const contactData4 = {
       id: "contact-4",
