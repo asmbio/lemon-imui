@@ -473,7 +473,7 @@ export default {
       let defIsShow = true;
       for (const name in this.CacheContactContainer.get()) {
         const show = curact.id == name && this.currentIsDefSidebar;
-        defIsShow = !show;
+        if(show)defIsShow = !show;
         nodes.push(
           <div class={cls} v-show={show}>
             {this.CacheContactContainer.get(name)}
