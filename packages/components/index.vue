@@ -97,7 +97,7 @@ export default {
     this.CacheContactContainer = new MemoryCache();
     this.CacheMenuContainer = new MemoryCache();
     this.CacheMessageLoaded = new MemoryCache();
-    this.CacheDraft = new MemoryCache();
+    this.CacheDraft = new MemoryCache();    
     return {
       drawerVisible: !this.hideDrawer,
       currentContactId: null,
@@ -106,6 +106,9 @@ export default {
       contacts: [],
       menus: [],
       editorTools: [],
+      siderwidth: '200pt',   
+      dpix:96,
+      ispc:true,
     };
   },
 
@@ -120,9 +123,38 @@ export default {
   },
   created() {
     this.initMenus();
+    
+      // if ( window.screen.deviceXDPI != undefined ) {
+      //     this.dpix = window.screen.deviceXDPI;
+          
+      // }
+      // else {
+      //     var tmpNode = document.createElement( "DIV" );
+      //     tmpNode.style.cssText = "width:1in;height:1in;position:absolute;left:0px;top:0px;z-index:99;visibility:hidden";
+      //     document.body.appendChild( tmpNode );
+      //     this.dpix= parseInt( tmpNode.offsetWidth );
+          
+      //     tmpNode.parentNode.removeChild( tmpNode );
+      // }
+      
+     var userAgentInfo = navigator.userAgent;
+     var Agents = new Array("Android", "iPhone", "SymbianOS", "Windows Phone", "iPad", "iPod");  
+     var flag = true;  
+     for (var v = 0; v < Agents.length; v++) {  
+         if (userAgentInfo.indexOf(Agents[v]) > 0) { flag = false; break; }  
+     }  
+     this.ispc= flag;
+    
   },
   async mounted() {
     await this.$nextTick();
+
+  //  await window.addEventListener('resize', () => {
+
+  //         this.onResize();
+  //   });
+  //   this.onResize();
+  //  console.log(navigator.userAgent);
   },
   computed: {
     currentContact() {
@@ -143,9 +175,13 @@ export default {
     },
   },
   watch: {
-    activeSidebar() {},
+    currentContactId(o,n){
+      //console.log(o,n);
+      this.onResize();
+    }
   },
   methods: {
+   
     _menuIsContacts() {
       return this.activeSidebar == DEFAULT_MENU_CONTACTS;
     },
@@ -282,11 +318,38 @@ export default {
             `lemon-wrapper--theme-${this.theme}`,
             { "lemon-wrapper--simple": this.simple },
             this.drawerVisible && "lemon-wrapper--drawer-show",
-          ]}
+          ]}          
         >
           {children}
         </div>
       );
+    },  
+
+ 
+  fanhui(){
+    this.currentContactId = 0;
+     
+  },
+  onResize(){
+      
+      const wrapperwidth = this.$refs.wrapper.clientWidth;
+      //const wrapperHeight = this.$refs.wrapper.clientHeight;
+      
+     // const wrapperwidthpt = wrapperwidth *72 / this.dpix;
+      //const wrapperHeightpt = this.$refs.wrapper.clientHeight;
+     // console.log(this.currentContactId,wrapperwidth);
+      //if (wrapperwidthpt<=600) {
+      if (!this.ispc) {
+      
+        //this.activeSidebar=""
+        if(this.currentContactId){
+          this.siderwidth = '0px'
+        }else{
+          this.siderwidth = wrapperwidth+'px'
+        }          
+      }else{
+        this.siderwidth= '200pt'
+      }
     },
     _renderMenu() {
       const menuItem = this._renderMenuItem();
@@ -432,7 +495,10 @@ export default {
     _renderSidebar(children, name, fixedtop) {
       return (
         <div
-          class="lemon-sidebar"
+          style={{
+            width: this.siderwidth,           
+          }}
+          class="lemon-sidebar" 
           v-show={this.activeSidebar == name}
           on-scroll={this._handleSidebarScroll}
         >
@@ -485,8 +551,17 @@ export default {
           v-show={this._menuIsMessages() && defIsShow && curact.id}
         >
           <div class="lemon-container__title">
+            <div  on-click={() => {
+                this.fanhui();
+              }}>
+              <span style="float:left;" class="iconfont icon-fanhui"
+            v-show={!this.ispc}  >            
+            </span>  
+            </div>
+           
+                                           
             {useScopedSlot(
-              this.$scopedSlots["message-title"],
+              this.$scopedSlots["message-title"],      
               <div class="lemon-container__displayname">
                 {curact.displayName}
               </div>,
@@ -531,6 +606,15 @@ export default {
           class={cls}
           v-show={this._menuIsContacts() && defIsShow && curact.id}
         >
+        <div class="lemon-container__title">
+            <div  on-click={() => {
+                this.fanhui();
+              }}>
+              <span style="float:left;" class="iconfont icon-fanhui"
+            v-show={!this.ispc} >            
+            </span>  
+            </div>                                                                 
+          </div>
           {useScopedSlot(
             this.$scopedSlots["contact-info"],
             <div class="lemon-contact-info">
@@ -608,7 +692,7 @@ export default {
       });
     },
     emojiImageToName(str) {
-      return str.replace(/<img emoji-name=\"([^\"]*?)\" [^>]*>/gi, "[!$1]");
+      return str.replace(/<img emoji-name="([^"]*?)" [^>]*>/gi, "[!$1]");
     },
     updateCurrentMessages() {
       if (!allMessages[this.currentContactId])
@@ -706,7 +790,7 @@ export default {
 
       if (!allMessages[contactId]) {
         this.updateCurrentMessages();
-        this._emitPullMessages(isEnd => {
+        this._emitPullMessages(() => {
           this.messageViewToBottom();
         });
       } else {
@@ -770,9 +854,9 @@ export default {
      * 切换左侧按钮
      * @param {String} name 按钮 name
      */
-    changeMenu(name) {
+    changeMenu(name) {      
       this.$emit("change-menu", name);
-      this.activeSidebar = name;
+      this.activeSidebar = name;      
     },
     /**
      * 初始化编辑框的 Emoji 表情列表，是 Lemon-editor.initEmoji 的代理方法
@@ -807,7 +891,7 @@ export default {
           title: "聊天",
           unread: 0,
           click: null,
-          render: menu => {
+          render: () => {
             return <i class="lemon-icon-message" />;
           },
           isBottom: false,
@@ -817,7 +901,7 @@ export default {
           title: "通讯录",
           unread: 0,
           click: null,
-          render: menu => {
+          render:  ()=> {
             return <i class="lemon-icon-addressbook" />;
           },
           isBottom: false,
@@ -1050,6 +1134,7 @@ export default {
 <style lang="stylus">
 bezier = cubic-bezier(0.645, 0.045, 0.355, 1)
 @import '~styles/utils/index'
+@import '~styles/fonts/iconfont.css'
 
 +b(lemon-wrapper)
   display flex
@@ -1100,8 +1185,7 @@ bezier = cubic-bezier(0.645, 0.045, 0.355, 1)
     .ant-badge-count
     .ant-badge-dot
       box-shadow 0 0 0 1px #1d232a
-+b(lemon-sidebar)
-  width 250px
++b(lemon-sidebar)  
   background #efefef
   display flex
   flex-direction column
@@ -1127,6 +1211,7 @@ bezier = cubic-bezier(0.645, 0.045, 0.355, 1)
     padding 15px 15px
   +e(displayname)
     font-size 16px
+    text-align center
 +b(lemon-vessel)
   display flex
   flex 1
