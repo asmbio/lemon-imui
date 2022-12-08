@@ -332,7 +332,7 @@ export default {
     _handleChangeFile(e) {
       const { fileInput } = this.$refs;
       Array.from(fileInput.files).forEach(file => {
-        this.$emit("upload", file);
+        this.$emit("upload", file);        
       });
       fileInput.value = "";
     },

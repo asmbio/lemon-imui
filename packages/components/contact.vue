@@ -89,7 +89,7 @@ export default {
   user-select none
   box-sizing border-box
   overflow hidden
-  background #efefef
+  
   text-align left
   p
     margin 0

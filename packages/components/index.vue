@@ -256,9 +256,10 @@ export default {
       });
     },
     _handleUpload(file) {
-      const imageTypes = ["image/gif", "image/jpeg", "image/png"];
+     // const imageTypes = ["image/gif", "image/jpeg", "image/png"];
       let joinMessage;
-      if (imageTypes.includes(file.type)) {
+      console.log(file.type)
+      if (file.type.startsWith("image")) {      
         joinMessage = {
           type: "image",
           content: URL.createObjectURL(file),
@@ -961,7 +962,10 @@ export default {
         console.error("id | displayName cant be empty");
         return false;
       }
-      if (this.hasContact(contact.id)) return true;
+      if (this.hasContact(contact.id)) {
+        this.updateContact(contact)
+        return true;
+      }
       this.contacts.push(
         Object.assign(
           {
@@ -1141,7 +1145,7 @@ bezier = cubic-bezier(0.645, 0.045, 0.355, 1)
   font-size 14px
   font-family "Microsoft YaHei"
   //mask-image radial-gradient(circle, white 100%, black 100%)
-  background #efefef
+  
   transition all .4s bezier
   position relative
   p
@@ -1186,7 +1190,7 @@ bezier = cubic-bezier(0.645, 0.045, 0.355, 1)
     .ant-badge-dot
       box-shadow 0 0 0 1px #1d232a
 +b(lemon-sidebar)  
-  background #efefef
+  
   display flex
   flex-direction column
   +e(scroll)
@@ -1203,7 +1207,7 @@ bezier = cubic-bezier(0.645, 0.045, 0.355, 1)
 +b(lemon-container)
   flex 1
   flex-column()
-  background #f4f4f4
+  
   word-break()
   position relative
   z-index 10
