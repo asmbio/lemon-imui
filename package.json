@@ -19,6 +19,7 @@
   },
   "scripts": {
     "serve": "vue-cli-service serve",
+    "servet": "set NODE_OPTIONS=\"--openssl-legacy-provider\"&npm run serve\n",
     "build": "vue-cli-service build --target lib --name index packages/index.js",
     "demo": "vue-cli-service build",
     "build-examples": "vue-cli-service build --dest examples/dist examples/main.js",
