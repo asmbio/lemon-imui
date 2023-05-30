@@ -43,7 +43,7 @@ if (typeof window !== "undefined" && window.Vue) {
   install(window.Vue);
 }
 
-export {
+export default {
   version,
   install
 };
