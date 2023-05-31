@@ -6839,6 +6839,8 @@ var isInitTool = false;
       var text = clipboardData.getData("Text");
 
       if (text) {
+        this.submitDisabled = false;
+
         if (window.clipboardData) {
           this.$refs.textarea.innerHTML = text;
         } else {
@@ -8004,15 +8006,26 @@ var renderDrawerContent = function renderDrawerContent() {};
      */
     appendMessage: function appendMessage(message) {
       var scrollToBottom = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      var unread = "+1";
+      var messageList = allMessages[message.toContactId]; // 如果是自己的消息需要push，发送的消息不再增加未读条数
 
-      if (allMessages[message.toContactId] === undefined) {
+      if (message.type == 'event' || this.user.id == message.fromUser.id) unread = "+0";
+
+      if (messageList === undefined) {
         this.updateContact({
           id: message.toContactId,
-          unread: "+1",
+          unread: unread,
           lastSendTime: message.sendTime,
           lastContent: this.lastContentRender(message)
         });
       } else {
+        // 如果消息存在则不再添加
+        var hasMsg = messageList.some(function (_ref) {
+          var id = _ref.id;
+          return id == message.id;
+        });
+        if (hasMsg) return;
+
         this._addMessage(message, message.toContactId, 1);
 
         var updateContact = {
@@ -8028,7 +8041,7 @@ var renderDrawerContent = function renderDrawerContent() {};
 
           this.CacheDraft.remove(message.toContactId);
         } else {
-          updateContact.unread = "+1";
+          updateContact.unread = unread;
         }
 
         this.updateContact(updateContact);
@@ -8315,7 +8328,7 @@ var renderDrawerContent = function renderDrawerContent() {};
 
       for (var name in this.CacheContactContainer.get()) {
         var show = curact.id == name && this.currentIsDefSidebar;
-        defIsShow = !show;
+        if (show) defIsShow = !show;
         nodes.push(h("div", {
           "class": cls,
           "directives": [{
@@ -8638,8 +8651,8 @@ var renderDrawerContent = function renderDrawerContent() {};
     removeMessage: function removeMessage(messageId) {
       var message = this.findMessage(messageId);
       if (!message) return false;
-      var index = allMessages[message.toContactId].findIndex(function (_ref) {
-        var id = _ref.id;
+      var index = allMessages[message.toContactId].findIndex(function (_ref2) {
+        var id = _ref2.id;
         return id == messageId;
       });
       allMessages[message.toContactId].splice(index, 1);
@@ -8714,9 +8727,9 @@ var renderDrawerContent = function renderDrawerContent() {};
         flatData = data;
       }
 
-      flatData.forEach(function (_ref2) {
-        var name = _ref2.name,
-            src = _ref2.src;
+      flatData.forEach(function (_ref3) {
+        var name = _ref3.name,
+            src = _ref3.src;
         return emojiMap[name] = src;
       });
     },
@@ -8872,16 +8885,16 @@ var renderDrawerContent = function renderDrawerContent() {};
     },
     findMessage: function findMessage(messageId) {
       for (var key in allMessages) {
-        var message = allMessages[key].find(function (_ref3) {
-          var id = _ref3.id;
+        var message = allMessages[key].find(function (_ref4) {
+          var id = _ref4.id;
           return id == messageId;
         });
         if (message) return message;
       }
     },
     findContact: function findContact(contactId) {
-      return this.getContacts().find(function (_ref4) {
-        var id = _ref4.id;
+      return this.getContacts().find(function (_ref5) {
+        var id = _ref5.id;
         return id == contactId;
       });
     },
