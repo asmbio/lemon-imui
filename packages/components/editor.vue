@@ -287,6 +287,7 @@ export default {
       const clipboardData = e.clipboardData || window.clipboardData;
       const text = clipboardData.getData("Text");
       if (text) {
+        this.submitDisabled = false;
         if (window.clipboardData) {
           this.$refs.textarea.innerHTML = text;
         } else {
