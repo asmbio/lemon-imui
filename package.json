@@ -21,6 +21,7 @@
     "serve": "vue-cli-service serve",
     "servet": "set NODE_OPTIONS=\"--openssl-legacy-provider\"&npm run serve\n",
     "build": "vue-cli-service build --target lib --name index packages/index.js",
+    "buildt": "set NODE_OPTIONS=\"--openssl-legacy-provider\"&npm run build\n",
     "demo": "vue-cli-service build",
     "build-examples": "vue-cli-service build --dest examples/dist examples/main.js",
     "lint": "vue-cli-service lint"
@@ -45,5 +46,8 @@
   "dependencies": {
     "console": "^0.7.2",
     "vue-resize-directive": "^1.2.0"
+  },
+   "rules": {
+    "no-console": "off"
   }
 }
