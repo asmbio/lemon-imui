@@ -82,6 +82,7 @@ export default {
      */
     hideMessageTime: Boolean,
     sendKey: Function,
+    wrapKey: Function,
     sendText: String,
     contextmenu: Array,
     contactContextmenu: Array,
@@ -105,7 +106,11 @@ export default {
       activeSidebar: DEFAULT_MENU_LASTMESSAGES,
       contacts: [],
       menus: [],
-      editorTools: [],
+      editorTools: [
+        { name: "emoji" },
+        { name: "uploadFile" },
+        { name: "uploadImage" },
+      ],
       siderwidth: '200pt',   
       dpix:96,
       ispc:true,
@@ -207,14 +212,21 @@ export default {
      * 新增一条消息
      */
     appendMessage(message, scrollToBottom = false) {
-      if (allMessages[message.toContactId] === undefined) {
+      let unread = "+1";
+      let messageList = allMessages[message.toContactId];
+      // 如果是自己的消息需要push，发送的消息不再增加未读条数
+      if (message.type == 'event' || this.user.id == message.fromUser.id) unread = "+0";
+      if (messageList === undefined) {
         this.updateContact({
           id: message.toContactId,
-          unread: "+1",
+          unread: unread,
           lastSendTime: message.sendTime,
           lastContent: this.lastContentRender(message),
         });
       } else {
+        // 如果消息存在则不再添加
+        let hasMsg = messageList.some(({id})=>id == message.id);
+        if (hasMsg) return;
         this._addMessage(message, message.toContactId, 1);
         const updateContact = {
           id: message.toContactId,
@@ -227,7 +239,7 @@ export default {
           }
           this.CacheDraft.remove(message.toContactId);
         } else {
-          updateContact.unread = "+1";
+          updateContact.unread = unread;
         }
         this.updateContact(updateContact);
       }
@@ -528,7 +540,7 @@ export default {
       let defIsShow = true;
       for (const name in this.CacheContactContainer.get()) {
         const show = curact.id == name && this.currentIsDefSidebar;
-        defIsShow = !show;
+        if(show)defIsShow = !show;
         nodes.push(
           <div class={cls} v-show={show}>
             {this.CacheContactContainer.get(name)}
@@ -587,6 +599,7 @@ export default {
                 tools={this.editorTools}
                 sendText={this.sendText}
                 sendKey={this.sendKey}
+                wrapKey={this.wrapKey}
                 onSend={this._handleSend}
                 onUpload={this._handleUpload}
               />
@@ -878,8 +891,9 @@ export default {
       flatData.forEach(({ name, src }) => (emojiMap[name] = src));
     },
     initEditorTools(data) {
+      //this.editorTools = data;
       this.editorTools = data;
-      this.$refs.editor.initTools(data);
+      //this.$refs.editor.initTools(data);
     },
     /**
      * 初始化左侧按钮
